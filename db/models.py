@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -37,7 +39,7 @@ class Movie(models.Model):
 
 
 class Order(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -48,7 +50,7 @@ class Order(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
-        return f"Order: {self.created_at.strftime('%Y-%m-%d %H:%M:%S')})"
+        return self.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
 
 class CinemaHall(models.Model):
@@ -102,7 +104,7 @@ class Ticket(models.Model):
         show_time_str = self.movie_session.show_time.strftime(
             "%Y-%m-%d %H:%M:%S"
         )
-        return (f"Ticket: {self.movie_session.movie.title} "
+        return (f"{self.movie_session.movie.title} "
                 f"{show_time_str} "
                 f"(row: {self.row}, seat: {self.seat})")
 
@@ -125,7 +127,7 @@ class Ticket(models.Model):
             })
 
     def save(self, *args, **kwargs) -> None:
-        self.full_clean()
+        self.full_clean(exclude=["order"])
         return super().save(*args, **kwargs)
 
 
