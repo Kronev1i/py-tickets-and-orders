@@ -8,7 +8,7 @@ User = get_user_model()
 @transaction.atomic
 def create_order(tickets: list, username: str, date: str = None) -> None:
     user = User.objects.get(username=username)
-    order = Order.objects.create(user=user)
+    order = Order(user=user)
     if date:
         order.created_at = date
         order.save()
