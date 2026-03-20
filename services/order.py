@@ -10,16 +10,19 @@ User = get_user_model()
 @transaction.atomic
 def create_order(tickets: list, username: str, date: str = None) -> None:
     user = User.objects.get(username=username)
-    order = Order(user=user)
+
+    order_params = {"user": user}
     if date:
-        order.created_at = date
-    order.save()
-    for ticket_data in tickets:
+        order_params["created_at"] = date
+
+    order = Order.objects.create(**order_params)
+
+    for ticket in tickets:
         Ticket.objects.create(
-            row=ticket_data["row"],
-            seat=ticket_data["seat"],
-            movie_session_id=ticket_data["movie_session"],
-            order=order,
+            row=ticket["row"],
+            seat=ticket["seat"],
+            movie_session_id=ticket["movie_session"],
+            order=order
         )
 
 

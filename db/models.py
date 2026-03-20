@@ -101,12 +101,11 @@ class Ticket(models.Model):
         ]
 
     def __str__(self) -> str:
-        show_time_str = self.movie_session.show_time.strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-        return (f"{self.movie_session.movie.title} "
-                f"{show_time_str} "
-                f"(row: {self.row}, seat: {self.seat})")
+        show_time = self.movie_session.show_time.strftime("%Y-%m-%d %H:%M:%S")
+        return (f""
+                f"{self.movie_session.movie.title} "
+                f"{show_time} (row: {self.row}"
+                f", seat: {self.seat})")
 
     def clean(self) -> None:
         if not (1 <= self.row <= self.movie_session.cinema_hall.rows):
